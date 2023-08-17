@@ -5,12 +5,22 @@
 <div class="container mt-5">
     <div class="row">
         <div class="col-md-12 text-center">
-            <h1 class="display-3 mb-4">Cocktail Explorer</h1>
+            <h1 class="display-2 mb-4">Cocktail Explorer</h1>
         </div>
     </div>
 
+    <div class="row mt-3">
+        <div class="col-md-12 text-center">
+            <h3 class="display-4 mb-4"> Browse By Name </h3>
+            <div class="btn-group">
+                {% for letter in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' %}
+                <a href="{{ url_for('index_by_letter', letter=letter) }}" class="btn btn-dark">{{ letter }}</a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
 
-
+    {% if cocktails %}
     <div class="row mt-4">
         {% for cocktail in cocktails %}
         <div class="col-md-4 mb-4">
@@ -20,14 +30,22 @@
                     <h5 class="card-title text-white">
                         {{ cocktail['strDrink'] }}
                     </h5>
-                    
+
                     <!-- Button to redirect to the cocktail details page -->
-                    <a href="{{ url_for('cocktail_detail', drink_id=cocktail['idDrink']) }}" class="btn btn-primary mt-2">Show Details</a>
+                    <a href="{{ url_for('cocktail_detail', drink_id=cocktail['idDrink']) }}"
+                        class="btn btn-primary mt-2">Show Details</a>
                 </div>
             </div>
         </div>
         {% endfor %}
     </div>
+    {% else %}
+    <div class="row mt-4">
+        <div class="col-md-12 text-center">
+            <p class="text-white">No cocktails found for the selected letter.</p>
+        </div>
+    </div>
+    {% endif %}
 </div>
 
 {% endblock %}

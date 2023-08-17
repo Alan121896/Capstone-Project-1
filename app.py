@@ -59,6 +59,19 @@ def index():
     return render_template('index.html', cocktails=cocktails)
 
 
+@app.route('/index/<letter>', methods=['GET'])
+def index_by_letter(letter):
+    cocktails = get_cocktails_by_letter(letter)
+    return render_template('index.html', cocktails=cocktails)
+
+def get_cocktails_by_letter(letter):
+    """Fetch list of cocktails that start with the given letter."""
+    url = f"https://www.thecocktaildb.com/api/json/v1/1/search.php?f={letter}"
+    response = requests.get(url)
+    data = response.json()
+    return data['drinks']
+
+
 @app.route('/search', methods=['GET', 'POST'])
 def search():
     if request.method == 'POST':
@@ -89,7 +102,7 @@ def cocktail_detail(drink_id):
 @app.route('/filter', methods=['GET'])
 def filter_page():
 
-    alcohols = ['Vodka', 'Gin', 'Rum', 'Tequila', 'Whiskey', 'Bourbon','Brandy', 'Mezcal', 'Absinthe', 'Beer', ]
+    alcohols = ['Vodka', 'Gin', 'Rum', 'Tequila', 'Whiskey', 'Bourbon','Brandy', 'Mezcal', 'Champagne']
     return render_template('filter.html', alcohols=alcohols)
 
 

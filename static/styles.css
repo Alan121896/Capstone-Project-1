@@ -1,0 +1,7 @@
+body {
+    background-image: url('aleksandr-popov-2GNBoMgKYEo-unsplash.jpg');
+    background-size: cover; 
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    color: white;  /* Assuming you want white text to contrast with the image */
+}

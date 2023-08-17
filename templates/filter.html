@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-12 text-center">
+            <h1 class="display-3 mb-4">Filter by Alcohol</h1>
+        </div>
+    </div>
+    
+    <div class="row">
+        <!-- Assuming alcohols is a list passed to this template -->
+        {% for alcohol in alcohols %}
+        <div class="col-md-3 mb-4">
+            <a href="{{ url_for('filter_results', alcohol_type=alcohol) }}" class="text-decoration-none">
+                <div class="card bg-dark text-center d-flex flex-column">
+                    <!-- Generate the image URL based on the alcohol name -->
+                    <div class="flex-grow-1 d-flex align-items-center justify-content-center">
+                        <img src="https://www.thecocktaildb.com/images/ingredients/{{ alcohol }}-Medium.png" alt="{{ alcohol }}" class="card-img-top">
+                    </div>
+                    
+                    <div class="card-body">
+                        <h5 class="card-title text-white">{{ alcohol }}</h5>
+                    </div>
+                </div>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock %}

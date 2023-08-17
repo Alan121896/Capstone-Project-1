@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cocktail Explorer</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="{{ url_for('index') }}">Cocktail Explorer</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <!-- <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
+            <form action="/search" method="post" class="form-inline my-2 my-lg-0 w-75">
+                <input type="text" name="cocktail_name" placeholder="Search for a cocktail" class="form-control mr-2 w-75">
+                <button type="submit" class="btn btn-primary mr-2">Search</button>
+
+                {% if request.endpoint == 'search' %}
+                    <a href="{{ url_for('index') }}" class="btn btn-secondary">Go Home</a>
+                {% else %}
+                    <a href="{{ url_for('index', rerandomize=True) }}" class="btn btn-secondary">Rerandomize</a>
+                {% endif %}
+            </form>
+        </div> -->
+
+        <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
+            <div></div> <!-- Empty div to push the search and button to the center and right respectively -->
+            
+            <form class="form-inline col-md-6" action="{{ url_for('search') }}" method="post">
+                <div class="input-group w-100">
+                    <input class="form-control" type="text" name="cocktail_name" placeholder="Search for a cocktail">
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-success" type="submit">Search</button>
+                    </div>
+                </div>
+            </form>
+            <a href="{{ url_for('filter_page') }}" class="btn btn-outline-primary">Filter by Alcohol</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        
+        {% block content %}
+
+        {% endblock %}
+    </div>
+    
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+
+</html>
+
+
+
+
+
+

@@ -1,13 +1,21 @@
 from flask import Flask, render_template, request, session, redirect, url_for, flash
-from flask_sqlalchemy import SQLAlchemy
-from models import db, Cocktail, connect_db, get_cocktail_by_id
+from models import db, Cocktail, User, connect_db, get_cocktail_by_id
+from forms import RegistrationForm, LoginForm
 import requests 
+from flask_login import login_user, logout_user, current_user, login_required, LoginManager
 
 
 app = Flask(__name__)
 app.app_context().push()
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///capstone_1'
 app.config['SECRET_KEY'] = '1'
+
+login = LoginManager(app)
+login.login_view = 'login'
+
+@login.user_loader
+def load_user(id):
+    return User.query.get(int(id))
 
 
 connect_db(app)
@@ -116,3 +124,31 @@ def filter_by_alcohol(alcohol_type):
 def filter_results(alcohol_type):
     cocktails = filter_by_alcohol(alcohol_type)
     return render_template('index.html', cocktails=cocktails)
+
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        user = User(username=form.username.data, email=form.email.data)
+        user.set_password(form.password.data)
+        db.session.add(user)
+        db.session.commit()
+        flash('Congratulations, you are now a registered user!')
+        return redirect(url_for('login'))
+    return render_template('register.html', title='Register', form=form)
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+        if user is None or not user.check_password(form.password.data):
+            flash('Invalid email or password')
+            return redirect(url_for('login'))
+        login_user(user, remember=form.remember_me.data)
+        return redirect(url_for('index'))
+    return render_template('login.html', title='Sign In', form=form)

@@ -9,19 +9,21 @@
     <div class="col-md-6 mx-auto">
 
         <!-- Cocktail details styled as a card -->
-        <div class="card bg-dark mb-4">
+        <div class="card bg-dark mb-4 border border-light">
             <!-- Set maximum width and height for the image to limit its size -->
-            <img src="{{ cocktail.strDrinkThumb }}" alt="{{ cocktail.strDrink }}" class="card-img-top" style="max-width: 100%; max-height: 400px; object-fit: cover;">
+            <img src="{{ cocktail.strDrinkThumb }}" alt="{{ cocktail.strDrink }}" class="card-img-top"
+                style="max-width: 100%; max-height: 400px; object-fit: cover;">
             <div class="card-body">
                 <h2 class="card-title text-white">{{ cocktail.strDrink }}</h2>
-                
+
                 <!-- List the ingredients -->
                 <h5 class="text-white">Ingredients:</h5>
                 <ul class="list-unstyled text-white">
                     {% for i in range(1, 16) %}
-                        {% if cocktail['strIngredient' ~ i] %}
-                            <li>{{ cocktail['strIngredient' ~ i] }}{% if cocktail['strMeasure' ~ i] %} - {{ cocktail['strMeasure' ~ i] }}{% endif %}</li>
-                        {% endif %}
+                    {% if cocktail['strIngredient' ~ i] %}
+                    <li>{{ cocktail['strIngredient' ~ i] }}{% if cocktail['strMeasure' ~ i] %} - {{
+                        cocktail['strMeasure' ~ i] }}{% endif %}</li>
+                    {% endif %}
                     {% endfor %}
                 </ul>
 
@@ -33,6 +35,19 @@
                 <h5 class="text-white mt-4">Glass:</h5>
                 <p class="text-white">{{ cocktail.strGlass }}</p>
             </div>
+
+            <!-- Check if user is authenticated -->
+            {% if current_user.is_authenticated %}
+                {% if cocktail in current_user.favorite_cocktails %}
+                <form action="{{ url_for('favorite_cocktail', drink_id=cocktail['idDrink']) }}" method="post">
+                    <button type="submit">Unfavorite</button>
+                </form>
+                {% else %}
+                <form action="{{ url_for('favorite_cocktail', drink_id=cocktail['idDrink']) }}" method="post">
+                    <button type="submit">Favorite</button>
+                </form>
+                {% endif %}
+            {% endif %}
         </div>
 
     </div>

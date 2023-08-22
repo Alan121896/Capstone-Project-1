@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="col-md-6 mx-auto">
+        <div class="col-md-12 text-center">
+            <h2 class="display-2 mb-4 text-white">Favorited Cocktails</h2>
+        </div>
+
+        {% for cocktail in current_user.favorite_cocktails %}
+            <div class="card bg-dark mb-4 border border-light">
+                <img src="{{ cocktail.strDrinkThumb }}" alt="{{ cocktail.strDrink }}" class="card-img-top" style="max-width: 100%; max-height: 400px; object-fit: cover;">
+                <div class="card-body">
+                    <h5 class="card-title text-white">{{ cocktail.strDrink }}</h5>
+                    <a href="{{ url_for('cocktail_detail', drink_id=cocktail['idDrink']) }}" class="btn btn-secondary">View Details</a>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

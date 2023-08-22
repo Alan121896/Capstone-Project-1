@@ -12,21 +12,25 @@
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <!-- <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
-            <form action="/search" method="post" class="form-inline my-2 my-lg-0 w-75">
-                <input type="text" name="cocktail_name" placeholder="Search for a cocktail" class="form-control mr-2 w-75">
-                <button type="submit" class="btn btn-primary mr-2">Search</button>
-
-                {% if request.endpoint == 'search' %}
-                    <a href="{{ url_for('index') }}" class="btn btn-secondary">Go Home</a>
-                {% else %}
-                    <a href="{{ url_for('index', rerandomize=True) }}" class="btn btn-secondary">Rerandomize</a>
-                {% endif %}
-            </form>
-        </div> -->
 
         <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
-            <div></div> <!-- Empty div to push the search and button to the center and right respectively -->
+            <ul class="navbar-nav">
+                {% if current_user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('favorites') }}">Favorites</a>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('login') }}">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('register') }}">Register</a>
+                    </li>
+                {% endif %}
+            </ul>
             
             <form class="form-inline col-md-6" action="{{ url_for('search') }}" method="post">
                 <div class="input-group w-100">
@@ -36,6 +40,7 @@
                     </div>
                 </div>
             </form>
+            
             <a href="{{ url_for('filter_page') }}" class="btn btn-outline-primary">Filter by Alcohol</a>
         </div>
     </nav>
@@ -53,9 +58,3 @@
 </body>
 
 </html>
-
-
-
-
-
-

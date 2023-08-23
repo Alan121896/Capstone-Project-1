@@ -12,6 +12,7 @@ class Cocktail(db.Model):
     name = db.Column(db.String(255))
     image_url = db.Column(db.String(255))
     instructions = db.Column(db.Text)
+    
 
     def toggle_favorite(self, user):
         if self in user.favorite_cocktails:
@@ -32,12 +33,14 @@ favorites = db.Table('favorites',
     db.Column('cocktail_id', db.Integer, db.ForeignKey('cocktails.id'))
 )
 
+
 class User(db.Model):
     __tablename__ = 'users'
 
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     password_hash = db.Column(db.String(128), nullable=False)
+    
     favorite_cocktails = db.relationship('Cocktail', secondary=favorites, backref=db.backref('favorited_by', lazy='dynamic'))
 
     def set_password(self, password):
@@ -52,8 +55,13 @@ class User(db.Model):
     def is_authenticated(self):
         return True
     
+    @property
+    def is_active(self):
+        return True
+    
     def get_id(self):
         return str(self.id)
+    
 
 def connect_db(app):
     """Connect to database."""

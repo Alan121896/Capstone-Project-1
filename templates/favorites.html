@@ -1,21 +1,41 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container mt-5">
-    <div class="col-md-6 mx-auto">
-        <div class="col-md-12 text-center">
-            <h2 class="display-2 mb-4 text-white">Favorited Cocktails</h2>
-        </div>
 
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-12 text-center">
+            <h1 class="display-2 mb-4 text-white">My Favorite Cocktails</h1>
+        </div>
+    </div>
+
+    {% if current_user.favorite_cocktails %}
+    <div class="row mt-4"> 
         {% for cocktail in current_user.favorite_cocktails %}
-            <div class="card bg-dark mb-4 border border-light">
-                <img src="{{ cocktail.strDrinkThumb }}" alt="{{ cocktail.strDrink }}" class="card-img-top" style="max-width: 100%; max-height: 400px; object-fit: cover;">
-                <div class="card-body">
-                    <h5 class="card-title text-white">{{ cocktail.strDrink }}</h5>
-                    <a href="{{ url_for('cocktail_detail', drink_id=cocktail['idDrink']) }}" class="btn btn-secondary">View Details</a>
+
+        <div class="col-md-4 mb-4">
+            <div class="card bg-dark border border-light">
+                <img src="{{ cocktail.image_url }}" alt="{{ cocktail.name }}" class="card-img-top">
+                <div class="card-body text-center">
+                    <h5 class="card-title text-white">
+                        {{ cocktail.name }}
+                    </h5>
+                    <a href="{{ url_for('cocktail_detail', drink_id=cocktail.id) }}" class="btn btn-primary mt-2">Show
+                        Details</a>
                 </div>
             </div>
-        {% endfor %}
+        </div>
+
+        {% endfor %} 
+    </div> 
+
+    {% else %}
+    <div class="row mt-4">
+        <div class="col-md-12 text-center">
+            <p class="text-white">You haven't favorited any cocktails yet.</p>
+        </div>
     </div>
+    {% endif %}
 </div>
+
 {% endblock %}

@@ -1,14 +1,17 @@
-from flask import Flask, render_template, request, session, redirect, url_for, flash
-from models import db, Cocktail, User, connect_db, get_cocktail_by_id
+from flask import Flask, render_template, request, session, redirect, url_for, flash, jsonify
+from models import db, Cocktail, User, connect_db, get_cocktail_by_id, favorites
 from forms import RegistrationForm, LoginForm
 import requests 
 from flask_login import login_user, logout_user, current_user, login_required, LoginManager
+import logging
+logging.basicConfig(level=logging.DEBUG)
 
 
 app = Flask(__name__)
 app.app_context().push()
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///capstone_1'
 app.config['SECRET_KEY'] = '1'
+
 
 login = LoginManager(app)
 login.login_view = 'login'
@@ -19,7 +22,7 @@ def load_user(id):
 
 
 connect_db(app)
-db.drop_all()
+# db.drop_all()
 db.create_all()
 
 
@@ -101,6 +104,7 @@ def cocktail_detail(drink_id):
     session['last_visited'] = request.headers.get("Referer", url_for('index'))  # default to index if no referer
 
     cocktail = get_cocktail_by_id(drink_id)
+    app.logger.debug(f"Fetched cocktail for ID {drink_id}: {cocktail}")
     if not cocktail:
         return "Cocktail not found", 404
 
@@ -149,7 +153,7 @@ def login():
         if user is None or not user.check_password(form.password.data):
             flash('Invalid username or password')
             return redirect(url_for('login'))
-        login_user(user, remember=form.remember_me.data)
+        login_user(user)
         return redirect(url_for('index'))
     return render_template('login.html', title='Sign In', form=form)
 
@@ -160,14 +164,52 @@ def logout():
     return redirect(url_for('login'))
 
 
+# @app.route('/favorite/<int:drink_id>', methods=['POST'])
+# @login_required
+# def favorite_cocktail(drink_id):
+#     app.logger.debug(f"Inside favorite_cocktail for drink ID: {drink_id}")
+#     cocktail = Cocktail.query.get_or_404(drink_id)
+#     cocktail.toggle_favorite(current_user)
+#     db.session.commit()
+#     return redirect(url_for('cocktail_detail', drink_id=drink_id))  
+
 @app.route('/favorite/<int:drink_id>', methods=['POST'])
 @login_required
 def favorite_cocktail(drink_id):
-    cocktail = Cocktail.query.get_or_404(drink_id)
+    app.logger.debug(f"Attempting to toggle favorite for drink ID: {drink_id}")
+
+    cocktail = Cocktail.query.get(drink_id)
+
+    if not cocktail:
+        app.logger.warning(f"Cocktail with ID {drink_id} not found in the database. Fetching from API...")
+        
+        # Fetch cocktail details from the API
+        cocktail_data = get_cocktail_by_id(drink_id)
+        if not cocktail_data:
+            app.logger.error(f"Failed to fetch cocktail with ID {drink_id} from the API.")
+            return "Failed to fetch cocktail from API", 404
+        
+        # Create a new cocktail instance and add to database
+        cocktail = Cocktail(id=cocktail_data['idDrink'], name=cocktail_data['strDrink'], image_url=cocktail_data['strDrinkThumb'], instructions=cocktail_data['strInstructions'])
+        db.session.add(cocktail)
+        db.session.commit()
+        app.logger.info(f"Cocktail with ID {drink_id} added to the database.")
+
     cocktail.toggle_favorite(current_user)
     db.session.commit()
-    return redirect(url_for('cocktail_detail', drink_id=drink_id))  # redirecting back to the cocktail detail page
+    
+    app.logger.debug(f"Successfully toggled favorite for drink ID: {drink_id}")
+
+    return redirect(url_for('cocktail_detail', drink_id=drink_id))
+
+
 @app.route('/favorites')
 @login_required
 def favorites():
+
+    for cocktail in current_user.favorite_cocktails:
+        print(cocktail.image_url)
+
     return render_template('favorites.html', cocktails=current_user.favorite_cocktails)
+
+

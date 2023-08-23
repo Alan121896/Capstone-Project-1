@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, session, redirect, url_for, flash, jsonify
-from models import db, Cocktail, User, connect_db, get_cocktail_by_id, favorites
+from models import db, Cocktail, User, connect_db, get_cocktail_by_id
 from forms import RegistrationForm, LoginForm
 import requests 
 from flask_login import login_user, logout_user, current_user, login_required, LoginManager

@@ -42,7 +42,7 @@ Our cocktail data is sourced from thecocktaildb.com, providing a vast collection
 Embark on a delightful journey of discovering and savoring cocktails from around the world!
 
 
-Cocktail Explorer User Flow
+# Cocktail Explorer User Flow
 
 Landing on the Home Page:
 

@@ -6,10 +6,6 @@ from forms import RegistrationForm, LoginForm
 import requests 
 from flask_login import login_user, logout_user, current_user, login_required, LoginManager
 
-'''used for testing favoriting features and seeing logged results'''
-# import logging
-# logging.basicConfig(level=logging.DEBUG) 
-
 
 app = Flask(__name__)
 app.app_context().push()
@@ -18,7 +14,6 @@ app.config['SQLALCHEMY_DATABASE_URI'] = (
     os.environ.get('DATABASE_URL', 'postgresql:///capstone_1'))
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', '1')
 
-#postgres://captstoneprojectdb_user:ZucOtWXC8gqM3BtIAyPOK0Vwe6TEaK4j@dpg-cjjpfamphtvs739jh4eg-a.oregon-postgres.render.com/captstoneprojectdb
 
 
 login = LoginManager(app)
@@ -183,31 +178,26 @@ def logout():
 @app.route('/favorite/<int:drink_id>', methods=['POST']) 
 @login_required
 def favorite_cocktail(drink_id):
-    '''commenting out all logging code used for testing'''
-
-    # app.logger.debug(f"Attempting to toggle favorite for drink ID: {drink_id}")
 
     cocktail = Cocktail.query.get(drink_id)
 
     if not cocktail:
-        # app.logger.warning(f"Cocktail with ID {drink_id} not found in the database. Fetching from API...")
         
         # Fetch cocktail details from the API
         cocktail_data = get_cocktail_by_id(drink_id)
         if not cocktail_data:
-            # app.logger.error(f"Failed to fetch cocktail with ID {drink_id} from the API.")
+        
             return "Failed to fetch cocktail from API", 404
         
         # Create a new cocktail instance and add to database
         cocktail = Cocktail(id=cocktail_data['idDrink'], name=cocktail_data['strDrink'], image_url=cocktail_data['strDrinkThumb'], instructions=cocktail_data['strInstructions'])
         db.session.add(cocktail)
         db.session.commit()
-        # app.logger.info(f"Cocktail with ID {drink_id} added to the database.")
+    
 
     cocktail.toggle_favorite(current_user)
     db.session.commit()
     
-    # app.logger.debug(f"Successfully toggled favorite for drink ID: {drink_id}")
 
     return redirect(url_for('cocktail_detail', drink_id=drink_id))
 

@@ -1,3 +1,5 @@
+import os
+
 from flask import Flask, render_template, request, session, redirect, url_for, flash, jsonify
 from models import db, Cocktail, User, connect_db, get_cocktail_by_id
 from forms import RegistrationForm, LoginForm
@@ -11,8 +13,12 @@ from flask_login import login_user, logout_user, current_user, login_required, L
 
 app = Flask(__name__)
 app.app_context().push()
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///capstone_1'
-app.config['SECRET_KEY'] = '1'
+
+app.config['SQLALCHEMY_DATABASE_URI'] = (
+    os.environ.get('DATABASE_URL', 'postgresql:///capstone_1'))
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', '1')
+
+#postgres://captstoneprojectdb_user:ZucOtWXC8gqM3BtIAyPOK0Vwe6TEaK4j@dpg-cjjpfamphtvs739jh4eg-a.oregon-postgres.render.com/captstoneprojectdb
 
 
 login = LoginManager(app)

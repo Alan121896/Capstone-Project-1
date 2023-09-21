@@ -29,6 +29,13 @@
                         <div class="mb-3">
                             {{ form.password2.label(class="form-label text-white") }}
                             {{ form.password2(class="form-control") }}
+                            {% if form.password.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.password.errors %}
+                                        <p>{{ error }}</p>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
                         </div>
                         <div class="text-center">
                             <button type="submit" class="btn btn-primary">Register</button>
